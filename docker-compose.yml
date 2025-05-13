@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  oracle:
+    image: gvenzl/oracle-xe
+    container_name: oracle
+    environment:
+      ORACLE_PASSWORD: oracle
+    ports:
+      - "1521:1521"
+    healthcheck:
+      test: ["CMD", "lsnrctl", "status"]
+      interval: 30s
+      retries: 10
+      
+  tomcat:
+    build:
+      context: ./tomcat
+    container_name: tomcat
+    ports:
+      - "8080:8080"
+    depends_on:
+    - oracle
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - tomcat
+      
+    
+
